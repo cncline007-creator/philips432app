@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Philips 432 Szimulátor</title>
+  <style>
+    body { background: black; color: white; font-family: monospace; margin: 0; padding: 10px; }
+    .statusbar { color: cyan; border-bottom: 1px solid cyan; padding: 4px; margin-bottom: 8px; }
+    .program { white-space: pre; font-size: 14px; }
+    .line-green { color: #00ff00; }
+    .line-yellow { color: #ffff00; }
+    .line-white { color: #ffffff; }
+    .controls { margin-top: 12px; }
+    button { background: #333; color: white; border: 1px solid #888; padding: 6px 10px; margin: 2px; }
+    .error { color: red; margin-top: 10px; }
+    select { background: #111; color: white; padding: 4px; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="statusbar">
+    MANUAL&nbsp;&nbsp; REF.POINT&nbsp;&nbsp; PM 9000 N 9000&nbsp;&nbsp;&nbsp; REMOTE PANEL ON
+  </div>
+
+  <div class="program" id="programArea">
+<span class="line-green">N10 G0 X0 Y0 Z0</span>
+<span class="line-green">N20 G1 X50 F100</span>
+<span class="line-yellow">N30 G2 X100 Y50 I25 J0</span>
+<span class="line-green">N40 G1 Z-10 F200</span>
+<span class="line-white">N50 M30</span>
+  </div>
+
+  <div class="controls">
+    <button onclick="switchLang()">HU ⇄ DE</button>
+    <button onclick="runProg()">▶ RUN</button>
+    <button onclick="resetProg()">■ RESET</button>
+    <br/>
+    <label for="errorSelect">Hiba szimuláció:</label>
+    <select id="errorSelect" onchange="showError(this.value)">
+      <option value="">-- válassz hibát --</option>
+      <option value="M01">M01 - RAM ellenőrző összeg hiba</option>
+      <option value="O05">O05 - Vészstop aktiválva</option>
+      <option value="O21">O21 - Mérési pont ütközés</option>
+    </select>
+  </div>
+
+  <div class="error" id="errorDisplay"></div>
+
+  <script>
+    let lang = "HU";
+    function switchLang() {
+      lang = lang === "HU" ? "DE" : "HU";
+      alert("Nyelv váltva: " + lang);
+    }
+    function runProg() {
+      alert((lang==="HU"?"Program futtatva!":"Programm läuft!"));
+    }
+    function resetProg() {
+      document.getElementById("errorDisplay").innerText = "";
+      alert((lang==="HU"?"Visszaállítva":"Zurückgesetzt"));
+    }
+    function showError(code) {
+      if (!code) return;
+      let msgHu = {
+        "M01": "M01 - RAM ellenőrző összeg hiba",
+        "O05": "O05 - Vészstop aktiválva",
+        "O21": "O21 - Mérési pont ütközés"
+      };
+      let msgDe = {
+        "M01": "M01 - RAM Prüfsummenfehler",
+        "O05": "O05 - Not-Aus aktiviert",
+        "O21": "O21 - Kollision der Messpunkte"
+      };
+      let text = (lang==="HU"?msgHu[code]:msgDe[code]);
+      document.getElementById("errorDisplay").innerText = "ERR " + text;
+    }
+  </script>
+</body>
+</html>
